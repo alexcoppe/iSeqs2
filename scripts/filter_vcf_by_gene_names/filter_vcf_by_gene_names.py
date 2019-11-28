@@ -71,7 +71,6 @@ def main():
     throw = args.throw
 
     genes_to_keep_or_trash = build_genes_set(genes)
-    print(genes_to_keep_or_trash)
     
     with open(vcf) as vcf:
         for line in vcf.readlines():
