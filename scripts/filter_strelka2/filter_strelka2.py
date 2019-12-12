@@ -5,7 +5,7 @@ import os.path
 import sys
 
 def main():
-    parser = argparse.ArgumentParser(description="Filter Strelka2 VCF by SDP / DP")
+    parser = argparse.ArgumentParser(description="Filter Strelka2 VCF by SDP / DP, QSS_NT and FDP")
     parser.add_argument('-r', '--ratio', action='store', type=float, help="The ration between SDP and DP should be smaller than -r varlue (default = 0.75)", required=False, default=0.75)
     parser.add_argument('-q', '--qss_nt', action='store', type=float, help="Quality score reflecting the joint probability of a somatic variant and NT", required=False, default=15)
     parser.add_argument('-f', '--fdp', action='store', type=float, help="Number of basecalls filtered from original read depth for tier1", required=False, default=4)
