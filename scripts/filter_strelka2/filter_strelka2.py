@@ -18,6 +18,11 @@ def main():
     qss_nt_threshold = args.qss_nt
     fdp_threshold = args.fdp
 
+    vcf_exists = os.path.isfile(vcf)
+    if vcf_exists == False:
+        print("File {} do not exists".format(vcf))
+        sys.exit(1)
+
     is_a_strelka_vcf = False
 
 
