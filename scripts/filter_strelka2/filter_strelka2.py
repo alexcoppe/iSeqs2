@@ -1,5 +1,19 @@
 #!/usr/bin/env python
 
+
+"""
+
+A script that filters a VCF produced by Strelka2 by these parameters:
+    - SDP: number of reads with deletions spanning this site at tier1
+    - DP: read depth for tier1 (used+filtered)
+    - QSS_NT: Quality score reflecting the joint probability of a somatic variant and NT
+    - FDP: Number of basecalls filtered from original read depth for tier1
+
+Read https://sites.google.com/site/strelkasomaticvariantcaller/home/somatic-variant-output for more information on
+filtering Strelka2
+
+"""
+
 import argparse
 import os.path
 import sys

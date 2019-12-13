@@ -1,6 +1,8 @@
 # filter_strelka2_by_sdp.py
 
-Given a VCF produced by [Strelka2](https://github.com/Illumina/strelka) variant caller filters it by **SDP / DP**, **QSS_NT**, and **FDP**.
+Given a VCF produced by [Strelka2](https://github.com/Illumina/strelka) variant caller filters it by **SDP / DP**, **QSS_NT**, and **FDP**.  
+Read [this page](https://sites.google.com/site/strelkasomaticvariantcaller/home/somatic-variant-output) for more information on filtering Strelka2 results.
+
 
 - **SDP**: number of reads with deletions spanning this site at tier1
 - **DP**: read depth for tier1 (used+filtered)
