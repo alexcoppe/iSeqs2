@@ -15,7 +15,7 @@ def find_expressed_variants(vcf, thpa_dictionary):
     with open(vcf) as vcf_content:
         for line in vcf_content.readlines():
             if line.startswith("#"):
-                pass
+                print(line[:-1])
             else:
                 splitted_line = line.split("\t")
                 info = splitted_line[7]
@@ -27,7 +27,13 @@ def find_expressed_variants(vcf, thpa_dictionary):
                         for transcript in splitted_transcript_info:
                             splitted_transcript = transcript.split("|")
                             gene_id,ensg = splitted_transcript[3],splitted_transcript[4]
-                            print(gene_id)
+                            expression_value = thpa_dictionary.get(gene_id)
+                            if expression_value != None:
+                                print(line[:-1])
+                                break
+    return 0
+
+
 
 def build_thpa_dictionary(normal_tissue_file_path, cell_types = ["B-cells", "NK-cells", "T-cells", "bone marrow", "dendritic cells", "granulocytes", "monocytes"], min_nx = 1):
     d = {}
@@ -57,18 +63,16 @@ def build_thpa_dictionary(normal_tissue_file_path, cell_types = ["B-cells", "NK-
 
 def main():
     parser = argparse.ArgumentParser(description="Filter by rna_tissue_consensus.tsv.zip consensus transcript expression levels")
-    parser.add_argument('-n', '--normal_tissue', action='store', type=str, help="rna_tissue_consensus.tsv.zip file path", required=False, default=None)
-    parser.add_argument('-v', '--vcf', action='store', type=str, help="VCF to be filtered", required=False, default=None)
+    parser.add_argument('-n', '--normal_tissue', action='store', type=str, help="rna_tissue_consensus.tsv.zip file path", required=True, default=None)
+    parser.add_argument('-v', '--vcf', action='store', type=str, help="VCF to be filtered", required=True, default=None)
+    parser.add_argument('-x', '--nx', action='store', type=int, help="Minimum transcript expression value, denoted Normalized eXpression (NX)", required=False, default=1)
     args = parser.parse_args()
 
     normal_tissue = args.normal_tissue
     vcf = args.vcf
+    nx = args.nx
 
-    thpa_dictionary = {}
-    #thpa_dictionary = build_thpa_dictionary(normal_tissue)
-    #for key in thpa_dictionary.keys():
-        #print(thpa_dictionary.get(key))
-
+    thpa_dictionary = build_thpa_dictionary(normal_tissue, min_nx = nx)
     find_expressed_variants(vcf, thpa_dictionary)
 
     
