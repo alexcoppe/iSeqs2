@@ -12,6 +12,7 @@ setuptools.setup(
      url="https://github.com/alexcoppe/iSeqs2",
      packages=["iseqs2"],
      scripts=["scripts/build_leukemia_genes_list/build_leukemia_genes_list.py",
+         "scripts/filter_by_normal_expression/filter_by_normal_expression.py",
          "scripts/filter_strelka2/filter_strelka2.py",
          "scripts/remove_snps_from_cosmic/remove_snps_from_cosmic.py",
          "scripts/filter_vcf_by_gene_names/filter_vcf_by_gene_names.py"],
