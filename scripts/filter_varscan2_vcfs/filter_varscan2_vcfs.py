@@ -23,8 +23,8 @@ class bcolors:
 
 def main():
     parser = argparse.ArgumentParser(description="Filter out VCFS produced by VarScan2")
-    parser.add_argument('-c', '--min_coverage', action='store', type=int, help="Minimum read depth [10]", required=False, default=20)
-    parser.add_argument('-r', '--min_reads2', action='store', type=int, help="Minimum supporting reads for a variant [2]", required=False, default=5)
+    parser.add_argument('-c', '--min_coverage', action='store', type=int, help="Minimum read depth [20]", required=False, default=20)
+    parser.add_argument('-r', '--min_reads2', action='store', type=int, help="Minimum supporting reads for a variant [5]", required=False, default=5)
     parser.add_argument('-s', '--min_strands2', action='store', type=int, help="Minimum # of strands on which variant observed (1 or 2) [1]", required=False, default=1)
     parser.add_argument('-q', '--min_avg_qual', action='store', type=int, help="Minimum average base quality for variant-supporting reads [30]", required=False, default=30)
     parser.add_argument('-f', '--min_var_freq', action='store', type=float, help="Minimum variant allele frequency threshold [0.05]", required=False, default=0.05)
