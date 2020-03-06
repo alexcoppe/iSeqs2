@@ -57,6 +57,8 @@ def main():
                         if not  is_snp:
                             #print(is_snp)
                             print(line[:-1])
+                    if identifier == "." or identifier.startswith("rs"):
+                        print(line[:-1])
 
 if  __name__ == "__main__":
     main()
