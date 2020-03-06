@@ -19,11 +19,17 @@ python ~/bin/vs_format_converter.py varscan_snp_filtered.snp > varscan_snp_filte
 | -q | --min_avg_qual | Minimum average base quality for variant-supporting reads | Int | 30 |
 | -f | --min_coverage | Minimum variant allele frequency threshold | Float | 0.05 |
 | -p | --p_value | Default p-value threshold for calling variants | Float | 0.05 |
-| -d | --directory | The directory containing subdirectories with VarScan2 VCFs | Str | . |
+| -d | --directory | The directory containing VarScan2 VCFs | Str | . |
 | -o | --output_directory | The output directory | Str | . |
 
 ### Usage example
 
 ```
-java -jar /home/ale/local/varscan.jar somaticFilter ./CK_RICADUTAST_CK_CONTROLLO/06_varscan_snp_cosmic.vcf --output-file ~/VarScan2/CK_RICADUTAST_CK_CONTROLLO_varscan.vcf --min-coverage 40 --min-reads2 10 --min-strands21 --min-avg-qual 50 --min-var-freq 0.05 --p-value 0.01
+filter_varscan2_vcfs.py -c 10 -r 5 -s 2 -q 20 -f 0.05 -p 0.03 -d ./CK_RICADUTAST_CK_CONTROLLO -O ~/VarScan2
+```
+
+The above comand will launch the following one on all Varscan2 VCFs found in the ./CK_RICADUTAST_CK_CONTROLLO directory.
+
+```
+java -jar ~/local/varscan.jar somaticFilter ./CK_RICADUTAST_CK_CONTROLLO/06_varscan_snp_cosmic.vcf --output-file ~/VarScan2/CK_RICADUTAST_CK_CONTROLLO_varscan.vcf --min-coverage 10 --min-reads2 5 --min-strands21 --min-avg-qual 20 --min-var-freq 0.05 --p-value 0.03
 ```
