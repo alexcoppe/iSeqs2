@@ -29,7 +29,7 @@ def main():
     parser.add_argument('-q', '--min_avg_qual', action='store', type=int, help="Minimum average base quality for variant-supporting reads [30]", required=False, default=30)
     parser.add_argument('-f', '--min_var_freq', action='store', type=float, help="Minimum variant allele frequency threshold [0.05]", required=False, default=0.05)
     parser.add_argument('-p', '--p_value', action='store', type=float, help="Default p-value threshold for calling variants [0.05]", required=False, default=0.05)
-    parser.add_argument('-d', '--directory', action='store', type=str, help="The directory containing subdirectories with VarScan2 VCFs", required=False, default='.')
+    parser.add_argument('-d', '--directory', action='store', type=str, help="The directory containing VarScan2 VCFs", required=False, default='.')
     parser.add_argument('-o', '--output_directory', action='store', type=str, help="The output directory", required=False, default='.')
     args = parser.parse_args()
 
@@ -50,20 +50,16 @@ def main():
         print(bcolors.ERROR + "{} is not a directory".format(output_directory) + bcolors.ENDC )
         sys.exit()
 
-
     for entry in os.listdir(directory):
-        if os.path.isdir(os.path.join(directory, entry)):
-            files = os.listdir(entry)
-            files.sort()
-            l = [file for file in files if file.startswith("0")]
-            vcf_to_filter = l[-1]
-            spliced_input_name = vcf_to_filter.split("_")
+        path = os.path.join(directory, entry)
+        if os.path.isfile(path):
+            spliced_input_name = entry.split("_")
             spliced_input_name = spliced_input_name[:len(spliced_input_name) - 1]
-            output_name = entry  + "_varscan.vcf"
+            spliced_input_name = "_".join(spliced_input_name)
+            output_name = spliced_input_name + "_varscan_filtered.vcf"
             output_file_path = os.path.join(output_directory, output_name)
 
-            file_path = os.path.join('.', entry, vcf_to_filter)
-            command = ["java", "-jar", "/home/ale/local/varscan.jar", "somaticFilter", file_path, "--output-file", output_file_path, "--min-coverage", str(min_coverage), "--min-reads2", str(min_reads2), "--min-strands2", str(min_strands2), "--min-avg-qual", str(min_avg_qual), "--min-var-freq", str(min_var_freq), "--p-value", str(p_value)]
+            command = ["java", "-jar", "/home/ale/local/varscan.jar", "somaticFilter", path, "--output-file", output_file_path, "--min-coverage", str(min_coverage), "--min-reads2", str(min_reads2), "--min-strands2", str(min_strands2), "--min-avg-qual", str(min_avg_qual), "--min-var-freq", str(min_var_freq), "--p-value", str(p_value)]
             print(bcolors.OKGREEN + " ".join(command) + bcolors.ENDC)
             subprocess.run(command)
 
