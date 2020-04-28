@@ -5,7 +5,7 @@ import setuptools
 
 setuptools.setup(
      name='iSeqs2',  
-     version='0.0.1',
+     version='0.0.2',
      author="Alessandro Coppe",
      author_email="",
      description="Another bunch of scripts I use in my Next Generation Sequencing Bioinformatics Analyses",
@@ -15,7 +15,9 @@ setuptools.setup(
          "scripts/filter_by_normal_expression/filter_by_normal_expression.py",
          "scripts/filter_strelka2/filter_strelka2.py",
          "scripts/remove_snps_from_cosmic/remove_snps_from_cosmic.py",
-         "scripts/filter_vcf_by_gene_names/filter_vcf_by_gene_names.py"],
+         "scripts/filter_vcf_by_gene_names/filter_vcf_by_gene_names.py",
+         "scripts/filter_varscan2_vcfs/filter_varscan2_vcfs.py",
+         "scripts/join_tables_from_snpsift_extractFields/join_tables_from_snpsift_extractFields.py"],
      classifiers=[
          "Programming Language :: Python :: 3",
          "License :: OSI Approved :: MIT License",
