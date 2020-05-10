@@ -145,18 +145,12 @@ def build_output_line(line, caller):
 def main():
     parser = argparse.ArgumentParser(description="Join all the tables produced by SnpSift extractFields")
     parser.add_argument('-d', '--directory', action='store', type=str, help="The directory containing all the files to be joined", required=True)
-    parser.add_argument('-o', '--output_directory', action='store', type=str, help="The output directory", required=False, default='.')
     args = parser.parse_args()
 
     directory = args.directory
-    output_directory = args.output_directory
 
     if os.path.isdir(directory) == False:
         print(bcolors.ERROR + "{} is not a directory".format(directory) + bcolors.ENDC )
-        sys.exit()
-
-    if os.path.isdir(output_directory) == False:
-        print(bcolors.ERROR + "{} is not a directory".format(output_directory) + bcolors.ENDC )
         sys.exit()
 
     variants = {}
