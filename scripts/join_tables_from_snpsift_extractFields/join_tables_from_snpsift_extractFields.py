@@ -57,30 +57,38 @@ def get_info_from_patient_mutation(format, patient_data, caller):
         returned_dict["vaf"] = vaf
 
     if caller == "strelka":
-        nucleotides_freq = {"a": patient_data[1],
+        splitted_format = format.split(":")
+        if splitted_format[1] == "BCN50":
+            tar = patient_data[7]
+            tir = patient_data[8]
+            normal = int(tar.split(",")[0])
+            tumor = int(tir.split(",")[0])
+            coverage = normal + tumor
+            vaf = float(tumor) / (float(normal) + float(tumor))
+        else:
+            nucleotides_freq = {"a": patient_data[1],
                 "c": patient_data[2],
                 "g": patient_data[5],
                 "t": patient_data[8]}
-        keys = nucleotides_freq.keys()
-        values = nucleotides_freq.values()
-        new_values = [int(el.split(",")[0]) for el in values]
-        new_nucleotides_freq = dict(zip(keys, new_values))
-        new_values.sort()
-        coverage = sum(new_values)
-        # DP: Read Depth
-        coverage = sum(new_values)
-        # RD: Depth of reference-supporting base
-        rd = sum(new_values) - sum(new_values[:-1])
-        # AD: Depth of variant-supporting bases (reads2)
-        ad = new_values[-2]
-        normal_nucleotide_freq = new_values[-1]
-        tumor_nucleotide_freq = new_values[-2]
-        frequency = float(tumor_nucleotide_freq) / (tumor_nucleotide_freq + normal_nucleotide_freq)
-        returned_dict["normal"] = normal_nucleotide_freq
-        returned_dict["tumor"] = tumor_nucleotide_freq
-        returned_dict["vaf"] = frequency
-        returned_dict["coverage"] = int(tumor_nucleotide_freq) + int(normal_nucleotide_freq)
-
+            keys = nucleotides_freq.keys()
+            values = nucleotides_freq.values()
+            new_values = [int(el.split(",")[0]) for el in values]
+            new_nucleotides_freq = dict(zip(keys, new_values))
+            new_values.sort()
+            coverage = sum(new_values)
+            # DP: Read Depth
+            coverage = sum(new_values)
+            # RD: Depth of reference-supporting base
+            rd = sum(new_values) - sum(new_values[:-1])
+            # AD: Depth of variant-supporting bases (reads2)
+            ad = new_values[-2]
+            normal_nucleotide_freq = new_values[-1]
+            tumor_nucleotide_freq = new_values[-2]
+            frequency = float(tumor_nucleotide_freq) / (tumor_nucleotide_freq + normal_nucleotide_freq)
+            returned_dict["normal"] = normal_nucleotide_freq
+            returned_dict["tumor"] = tumor_nucleotide_freq
+            returned_dict["vaf"] = frequency
+            returned_dict["coverage"] = int(tumor_nucleotide_freq) + int(normal_nucleotide_freq)
 
     return returned_dict
 
