@@ -65,6 +65,10 @@ def get_info_from_patient_mutation(format, patient_data, caller):
             tumor = int(tir.split(",")[0])
             coverage = normal + tumor
             vaf = float(tumor) / (float(normal) + float(tumor))
+            returned_dict["normal"] = normal
+            returned_dict["tumor"] = tumor
+            returned_dict["vaf"] = vaf
+            returned_dict["coverage"] = coverage
         else:
             nucleotides_freq = {"a": patient_data[1],
                 "c": patient_data[2],
