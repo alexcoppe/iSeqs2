@@ -42,6 +42,18 @@ def get_info_from_patient_mutation(format, patient_data, caller):
         returned_dict["normal"] = normal
         returned_dict["tumor"] = tumor
 
+    if caller == "haplotypecaller":
+        # Allelic depths for the ref and alt alleles in the order listed
+        AD_alleles_depth = patient_data[1]
+        normal = AD_alleles_depth.split(",")[0]
+        tumor = AD_alleles_depth.split(",")[1]
+        vaf = float(tumor) / ( float(tumor) + float(normal))
+        coverage = int(tumor) + int(normal)
+        returned_dict["vaf"] = vaf
+        returned_dict["coverage"] = coverage
+        returned_dict["normal"] = normal
+        returned_dict["tumor"] = tumor
+
     if caller == "varscan":
         # DP: Read Depth (coverage) Total depth of quality bases
         coverage = patient_data[2]
@@ -110,6 +122,10 @@ def build_output_line(line, caller):
     clnsig = splitted_line[8]
     first_part_of_output.append(clnsig)
     file_format = splitted_line[9]
+    if caller == "haplotypecaller":
+        tumor_data = 10
+        tumor_data = get_info_from_patient_mutation(file_format, splitted_line[tumor_data], "haplotypecaller")
+
     if caller == "mutect2":
         gt1 = splitted_line[11].split(":")[0]
         gt2 = splitted_line[10].split(":")[0]
@@ -150,8 +166,26 @@ def build_output_line(line, caller):
 
     first_part_of_output.append(gene)
     first_part_of_output.append(effect)
-    #print(first_part_of_output)
     return first_part_of_output
+
+def clean_sample_names(list_of_available_files):
+    sample_names = []
+    l = [f for f in list_of_available_files if not f.startswith(".")]
+    for name in l:
+        i = 0
+        splitted_name = name.split("_")
+        for el in splitted_name:
+            if el in ["mutect", "strelka", "mutect2", "varscan"]:
+                sample_name = splitted_name[:(i)]
+                sample_names.append("_".join(sample_name))
+                break
+            if el in ["none"]:
+                sample_name = splitted_name[:(i + 1)]
+                sample_names.append("_".join(sample_name))
+                break
+            i += 1
+    sample_names = list(set(sample_names))
+    return(sample_names)
 
 
 def main():
@@ -170,6 +204,7 @@ def main():
     all_files = os.listdir(directory)
     all_files.sort()
     sample_names = list(set(["_".join(f.split("_")[:4]) for f in all_files]))
+    sample_names = clean_sample_names(all_files)
     for sample in sample_names:
         mutations = {}
         mutation_lines = {}
@@ -238,6 +273,22 @@ def main():
                         else:
                             mutations[the_key].append("strelka")
 
+            elif "none" in entry:
+                f = open(os.path.join(directory, entry))
+                for line in f:
+                    if not line.startswith("#") and not line.startswith("CHROM"):
+                        output_line = "\t".join(build_output_line(line, "haplotypecaller"))
+                        the_key = output_line.split("\t")[0] + output_line.split("\t")[1]
+                        if the_key not in mutation_lines.keys():
+                            mutation_lines[the_key] = []
+                            mutation_lines[the_key] = output_line
+                        if  the_key not in mutations.keys():
+                            mutations[the_key] = []
+                            mutations[the_key].append("haplotypecaller")
+                        else:
+                            mutations[the_key].append("haplotypecaller")
+
+
 
         for key in mutations:
             first_part_of_output = mutation_lines.get(key)
@@ -245,7 +296,6 @@ def main():
             variant_callers = "-".join(variant_callers)
             entire_line = first_part_of_output + "\t" + variant_callers + "\t" + sample
             print(entire_line)
-
 
 
 if __name__ == "__main__":
