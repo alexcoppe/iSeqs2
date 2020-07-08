@@ -4,15 +4,16 @@ import argparse
 import os.path
 import sys
 import gzip
+import re
 
 
 def snps_from_cosmic(cosmic_file):
     """
-    Removes the SNPs from COSMIC
+    Returns a set of SNPs from COSMIC
 
     Parameters:
 
-    cosmic_file (string): the file from COSMIC (like: CosmicCodingMuts.vcf.gz)
+    cosmic_file (string): the file path to the COSMIC data (example: CosmicCodingMuts.vcf.gz)
 
 
     Returns:
@@ -35,6 +36,32 @@ def snps_from_cosmic(cosmic_file):
     return set(cosmic_snps)
 
 
+def get_cosmic_ids(vcf_line):
+    '''
+    Get the COSMIC id from the VCF's info field 
+
+    Parameters:
+
+    vcf_line (string): a line from a VCF file
+
+    Returns:
+
+    A list of COSMIC ids
+    '''
+    cosmic_ids = []
+    splitted_line = vcf_line.split("\t")
+    info_field = splitted_line[7]
+    p = re.compile("COSM\d+")
+    m = p.finditer(info_field)
+    for match in m:
+        span = match.span()
+        cosmic_id = info_field[span[0]:span[1]]
+        if cosmic_id != None:
+            cosmic_ids.append(cosmic_id)
+    cosmic_ids = list(set(cosmic_ids))
+    return cosmic_ids
+
+
 def main():
     parser = argparse.ArgumentParser(description="Removes the SNPs from COSMIC")
     parser.add_argument('-c', '--cosmic', action='store', type=str, help="The file from Cosmic (Example: CosmicCodingMuts.vcf.gz)", required=True)
@@ -43,22 +70,23 @@ def main():
 
     cosmic_snps = snps_from_cosmic(args.cosmic)
 
+    is_snp = False
     with open(args.vcf) as vcf:
         for line in vcf:
             if line.startswith("#"):
                 print(line[:-1])
             else:
-                splitted_line = line.split("\t")
-                ids = splitted_line[2]
-                splitted_ids = ids.split(";")
-                for identifier in splitted_ids:
-                    if identifier.startswith("COSM") or identifier.startswith("COSM"):
-                        is_snp = identifier in cosmic_snps
-                        if not  is_snp:
-                            #print(is_snp)
-                            print(line[:-1])
-                    if identifier == "." or identifier.startswith("rs"):
+                cosmic_ids = get_cosmic_ids(line)
+                if len(cosmic_ids) == 0:
+                    print(line[:-1])
+                else:
+                    is_snp = False
+                    for cosmic_id in cosmic_ids:
+                        if cosmic_id in cosmic_snps:
+                            is_snp = True
+                    if is_snp == False:
                         print(line[:-1])
+                    is_snp = False
 
 if  __name__ == "__main__":
     main()
