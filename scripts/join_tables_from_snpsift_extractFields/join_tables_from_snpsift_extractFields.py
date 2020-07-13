@@ -211,6 +211,7 @@ def main():
         sample_files = [f for f in all_files if f.startswith(sample)]
 
         for entry in sample_files:
+
             if "_mutect2_" in entry:
                 f = open(os.path.join(directory, entry))
                 for line in f:
@@ -273,7 +274,7 @@ def main():
                         else:
                             mutations[the_key].append("strelka")
 
-            elif "none" in entry:
+            elif "_none_" in entry:
                 f = open(os.path.join(directory, entry))
                 for line in f:
                     if not line.startswith("#") and not line.startswith("CHROM"):
