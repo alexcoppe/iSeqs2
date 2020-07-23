@@ -42,11 +42,15 @@ def get_info_from_patient_mutation(format, patient_data, caller):
         returned_dict["normal"] = normal
         returned_dict["tumor"] = tumor
 
+
     if caller == "haplotypecaller":
         # Allelic depths for the ref and alt alleles in the order listed
         AD_alleles_depth = patient_data[1]
         normal = AD_alleles_depth.split(",")[0]
         tumor = AD_alleles_depth.split(",")[1]
+        addition = (float(tumor) + float(normal))
+        if addition == 0:
+            return None
         vaf = float(tumor) / ( float(tumor) + float(normal))
         coverage = int(tumor) + int(normal)
         returned_dict["vaf"] = vaf
@@ -91,7 +95,6 @@ def get_info_from_patient_mutation(format, patient_data, caller):
             new_values = [int(el.split(",")[0]) for el in values]
             new_nucleotides_freq = dict(zip(keys, new_values))
             new_values.sort()
-            coverage = sum(new_values)
             # DP: Read Depth
             coverage = sum(new_values)
             # RD: Depth of reference-supporting base
@@ -125,6 +128,8 @@ def build_output_line(line, caller):
     if caller == "haplotypecaller":
         tumor_data = 10
         tumor_data = get_info_from_patient_mutation(file_format, splitted_line[tumor_data], "haplotypecaller")
+        if tumor_data == None:
+            return None
 
     if caller == "mutect2":
         gt1 = splitted_line[11].split(":")[0]
@@ -278,16 +283,17 @@ def main():
                 f = open(os.path.join(directory, entry))
                 for line in f:
                     if not line.startswith("#") and not line.startswith("CHROM"):
-                        output_line = "\t".join(build_output_line(line, "haplotypecaller"))
-                        the_key = output_line.split("\t")[0] + output_line.split("\t")[1]
-                        if the_key not in mutation_lines.keys():
-                            mutation_lines[the_key] = []
-                            mutation_lines[the_key] = output_line
-                        if  the_key not in mutations.keys():
-                            mutations[the_key] = []
-                            mutations[the_key].append("haplotypecaller")
-                        else:
-                            mutations[the_key].append("haplotypecaller")
+                        if build_output_line(line, "haplotypecaller") != None:
+                            output_line = "\t".join(build_output_line(line, "haplotypecaller"))
+                            the_key = output_line.split("\t")[0] + output_line.split("\t")[1]
+                            if the_key not in mutation_lines.keys():
+                                mutation_lines[the_key] = []
+                                mutation_lines[the_key] = output_line
+                            if  the_key not in mutations.keys():
+                                mutations[the_key] = []
+                                mutations[the_key].append("haplotypecaller")
+                            else:
+                                mutations[the_key].append("haplotypecaller")
 
 
 
