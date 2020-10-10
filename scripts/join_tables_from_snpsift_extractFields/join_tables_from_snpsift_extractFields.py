@@ -62,9 +62,9 @@ def get_info_from_patient_mutation(format, patient_data, caller):
         # DP: Read Depth (coverage) Total depth of quality bases
         coverage = patient_data[2]
         # RD: Depth of reference-supporting base
-        normal = patient_data[2]
+        normal = patient_data[3]
         # AD: Depth of variant-supporting bases (reads2) tumor bases
-        tumor = patient_data[3]
+        tumor = patient_data[4]
         # FREQ: Variant allele frequency
         vaf = float(tumor) / ( float(tumor) + float(normal))
         returned_dict["coverage"] = coverage
