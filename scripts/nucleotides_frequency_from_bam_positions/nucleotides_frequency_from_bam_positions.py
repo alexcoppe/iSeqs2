@@ -12,7 +12,7 @@ import sys
 
 def get_alignment_info_in_position(alignmentfile, chromosome, pos):
     nucleotides_in_pos = {"A":0, "C":0, "G":0, "T":0}
-    for pileupcolumn in alignmentfile.pileup("12", pos, pos + 1):
+    for pileupcolumn in alignmentfile.pileup(chromosome, pos, pos + 1):
         if pileupcolumn.pos == pos:
            for pileupread in pileupcolumn.pileups:
                if not pileupread.is_del and not pileupread.is_refskip:
@@ -64,7 +64,7 @@ def main():
 
     print("Position\tA\tC\tG\tT\tCoverage")
     for position in positions_from_file:
-        alignment_info_in_position = get_alignment_info_in_position(mybam, position[0], int(position[1]))
+        alignment_info_in_position = get_alignment_info_in_position(mybam, position[0], int(position[1]) - 1)
         print("{}:{}\t{}\t{}\t{}\t{}\t{}".format(position[0],position[1],
             alignment_info_in_position['A'], 
             alignment_info_in_position['C'],
